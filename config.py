@@ -6,9 +6,13 @@ from typing import ClassVar, Self, get_type_hints
 class Config:
     _BOT_TOKEN_ENV: ClassVar[str] = 'Movie_And_Series_Watchlist_TELEGRAM_BOT_TOKEN'
     _DATABASE_URL_ENV: ClassVar[str] = 'Movie_And_Series_Watchlist_DATABASE_URL'
+    _DATABASE_USER: ClassVar[str] = 'Movie_And_Series_Watchlist_DATABASE_USER'
+    _DATABASE_PASSWORD: ClassVar[str] = 'Movie_And_Series_Watchlist_DATABASE_PASSWORD'
 
     BOT_TOKEN: ClassVar[str]
     DATABASE_URL: ClassVar[str]
+    DATABASE_USER: ClassVar[str]
+    DATABASE_PASSWORD: ClassVar[str]
 
     @classmethod
     def _get_required_fields(cls) -> list[str]:
@@ -35,6 +39,8 @@ class Config:
     def _load(cls):
         cls.BOT_TOKEN = cls._get_env(cls._BOT_TOKEN_ENV)
         cls.DATABASE_URL = cls._get_env(cls._DATABASE_URL_ENV)
+        cls.DATABASE_USER = cls._get_env(cls._DATABASE_USER)
+        cls.DATABASE_PASSWORD = cls._get_env(cls._DATABASE_PASSWORD)
 
     @classmethod
     def _validate(cls) -> None:
