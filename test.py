@@ -1,5 +1,8 @@
+import asyncio
 import aiohttp
+
 from conf import Config
+from models.API.models_omdb import APIOMDBResponse
 
 
 async def get_movie_details(name_of_movie: str) -> dict:
@@ -7,7 +10,7 @@ async def get_movie_details(name_of_movie: str) -> dict:
     params = {
         't': name_of_movie,
         'type': 'movie',
-        'plot': 'full',
+        'plot': 'short',
         'r': 'json',
         'v': '1',
         'apikey': Config.MOVIE_API_KEY
@@ -19,3 +22,9 @@ async def get_movie_details(name_of_movie: str) -> dict:
                 return await response.json()
             else:
                 raise Exception(f"HTTP {response.status}")
+
+async def main():
+    val = await get_movie_details('Mom')
+    return APIOMDBResponse(**val)
+
+print(asyncio.run(main()))

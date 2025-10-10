@@ -1,6 +1,7 @@
 from sqlalchemy import Column, String, DateTime, Boolean, BigInteger, UUID, Double, ARRAY
 from sqlalchemy.sql import func
-from postgresql_database import Base
+
+from database.postgresql_database import Base
 
 
 class User(Base):
