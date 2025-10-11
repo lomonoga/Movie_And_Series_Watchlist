@@ -2,7 +2,7 @@ import asyncio
 import aiohttp
 
 from conf import Config
-from models.API.models_omdb import APIOMDBResponse
+from models.API.models_omdb import parse_omdb_response
 
 
 async def get_movie_details(name_of_movie: str) -> dict:
@@ -25,6 +25,6 @@ async def get_movie_details(name_of_movie: str) -> dict:
 
 async def main():
     val = await get_movie_details('Mom')
-    return APIOMDBResponse(**val)
+    return parse_omdb_response(val)
 
 print(asyncio.run(main()))

@@ -4,14 +4,14 @@ from typing import Union, List
 from models.logic.GenreOfFilmEnum import GenreOfFilmEnum
 
 
-class RatingMap(BaseModel):
-    Source: str
-    Value: str
-
-
 class ErrorAboutFilmResponse(BaseModel):
     Response: bool
     Error: str
+
+
+class RatingMap(BaseModel):
+    Source: str
+    Value: str
 
 
 class InfoAboutFilmResponse(BaseModel):
@@ -45,8 +45,12 @@ class InfoAboutFilmResponse(BaseModel):
     @classmethod
     def parse_genres(cls, value):
         if isinstance(value, str):
-            return [GenreOfFilmEnum.safe_parse_list(value)]
+            return GenreOfFilmEnum.safe_parse_list(value)
         return value
 
 
-APIOMDBResponse = Union[ErrorAboutFilmResponse, InfoAboutFilmResponse]
+def parse_omdb_response(data: dict) -> ErrorAboutFilmResponse | InfoAboutFilmResponse:
+    if data.get('Response') == 'False':
+        return ErrorAboutFilmResponse(**data)
+    else:
+        return InfoAboutFilmResponse(**data)
