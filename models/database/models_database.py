@@ -1,7 +1,8 @@
-from sqlalchemy import Column, String, DateTime, Boolean, BigInteger, UUID, Double, ARRAY
+from sqlalchemy import Column, String, DateTime, Boolean, BigInteger, UUID, ARRAY, Enum, Float
 from sqlalchemy.sql import func
 
 from database.postgresql_database import Base
+from models.logic.GenreOfFilmEnum import GenreOfFilmEnum
 
 
 class User(Base):
@@ -10,6 +11,8 @@ class User(Base):
     user_id = Column(BigInteger, primary_key=True, index=True, nullable=False)
     is_bot = Column(Boolean, index=True, nullable=False)
     first_name = Column(String(255), nullable=False)
+
+    count_views_movies = Column(BigInteger, default=0)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
@@ -21,14 +24,15 @@ class User(Base):
 class Movie(Base):
     __tablename__ = 'Movies'
 
-    movie_id = Column(UUID, primary_key=True, index=True, nullable=False)
-    title = Column(String(255), nullable=False)
-    release_year = Column(BigInteger, index=True, nullable=False)
-    genres = Column(A, nullable=False)
-    auto_rating = Column(Double, nullable=False)
-    manual_rating = Column(Double, nullable=False)
-    is_viewed = Column(Boolean, nullable=False)
+    internal_movie_id = Column(UUID, primary_key=True, index=True, nullable=False)
+    manual_title = Column(String(255), nullable=False)
+    manual_rating = Column(Float, nullable=False)
 
-    is_deleted = Column(Boolean, index=True, nullable=False)
+    omdb_genres = Column(ARRAY(Enum(GenreOfFilmEnum)), nullable=False)
+    imdb_rating = Column(Float, nullable=False)
+
+    is_viewed = Column(Boolean, nullable=False, default=False)
+
+    is_deleted = Column(Boolean, index=True, nullable=False, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
