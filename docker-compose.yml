@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_DB: movie_and_series_watchlist
+      POSTGRES_USER: ${Movie_And_Series_Watchlist_DATABASE_USER:-postgres}
+      POSTGRES_PASSWORD: ${Movie_And_Series_Watchlist_DATABASE_PASSWORD:-postgres}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=ru_RU.UTF-8"
+    ports:
+      - "5438:5432"
+    volumes:
+      - postgres_movie_and_series_watchlist_data:/var/lib/postgresql/data
+    networks:
+      - MASW_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${Movie_And_Series_Watchlist_DATABASE_USER:-postgres} -d movie_and_series_watchlist" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+#  movie_and_series_watchlist:
+#    build: .
+#    container_name: movie_and_series_watchlist
+#    environment:
+#      DATABASE_URL: postgres
+#      DATABASE_PORT: 5438
+#      DATABASE_NAME: ${DATABASE_NAME:-movie_database}
+#      DATABASE_USER: ${DATABASE_USER:-movie_user}
+#      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-movie_password}
+#      PYTHONPATH: /movie_and_series_watchlist
+#    ports:
+#      - "8069:8069"
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#    volumes:
+#      - .:/movie_and_series_watchlist
+#    networks:
+#      - MASW_network
+#    command: >
+#      sh -c "
+#        alembic upgrade head &&
+#        python main.py
+#      "
+
+
+volumes:
+  postgres_movie_and_series_watchlist_data:
+
+networks:
+  MASW_network:
+    driver: bridge
