@@ -14,12 +14,12 @@ def setup_logger() -> logging.Logger:
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setFormatter(formatter)
 
-        #file_handler = logging.FileHandler('app.log')
-        #file_handler.setFormatter(formatter)
+        # file_handler = logging.FileHandler('app.log')
+        # file_handler.setFormatter(formatter)
 
         logger.addHandler(console_handler)
-        #logger.addHandler(file_handler)
+        # logger.addHandler(file_handler)
+
         logger.propagate = False
 
     return logger
-
