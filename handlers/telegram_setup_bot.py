@@ -1,5 +1,6 @@
-from telegram.ext import Application, CommandHandler, MessageHandler, filters
+from telegram.ext import Application, CommandHandler
 
+from handlers.telegram.help_handler import help_command
 from handlers.telegram.start_handler import start_command
 
 
@@ -7,8 +8,7 @@ def setup_bot(token: str) -> Application:
     application = Application.builder().token(token).build()
 
     application.add_handler(CommandHandler("start", start_command))
-    # application.add_handler(CommandHandler("help", help_command))
-
+    application.add_handler(CommandHandler("help", help_command))
 
     # application.add_handler(MessageHandler(
     #     filters.StatusUpdate.NEW_CHAT_MEMBERS,

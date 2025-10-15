@@ -34,7 +34,7 @@ class Movie(Base):
     imdb_rating = Column(Float, nullable=False)
 
     user_id = Column(BigInteger, ForeignKey('users.id'), nullable=False)
-    playlist_id = Column(UUID, ForeignKey('playlists.id'), nullable=False)
+    playlist_id = Column(UUID, ForeignKey('playlists.id'), nullable=True)
 
     is_viewed = Column(Boolean, nullable=False, default=False)
 

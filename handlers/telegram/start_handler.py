@@ -1,5 +1,5 @@
 from sqlalchemy.future import select
-from telegram import Update
+from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import ContextTypes
 
 from conf import Logger
@@ -26,9 +26,10 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await session.commit()
             Logger.info(f"New user created with id: {user.id}")
         else:
-            db_user.first_name = user.first_name or db_user.first_name
-            Logger.info(f"User updated with id: {user.id}")
-            await session.commit()
+            if user.first_name != db_user.first_name:
+                db_user.first_name = user.first_name
+                Logger.info(f"User updated with id: {user.id}")
+                await session.commit()
 
     welcome_text: str = f"""
 👋 Привет, {user.first_name}!
@@ -36,12 +37,33 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 Я твой бот для управления коллекцией фильмов и сериалов.
 
 📝 Что я умею:
-• Добавлять фильмы и сериалы в плейлисты
+• Добавлять фильмы и сериалы
+• Управлять твоими плейлистами
 • Вести список просмотренных фильмов
 • Рекомендовать что посмотреть
 • Хранить твои оценки, а так же получать оценку фильмов из интернета
 
-Начни с команды /help чтобы узнать больше!
+
+👇 Выбери кнопку ниже и перестань терять фильмы!
     """
 
-    await update.message.reply_text(welcome_text)
+    #    📁➕🎬🔍📊ℹ️
+
+    keyboard = [
+        [KeyboardButton("🎬 Фильмы и сериалы")],
+        [InlineKeyboardButton("🎬 Фильмы и сериалы", callback_data="movie_keyboard")],
+        [InlineKeyboardButton("📁 Плейлисты", callback_data="playlist_keyboard")],
+        [InlineKeyboardButton("🎯 Рекомендации", callback_data="recommendation_keyboard")],
+    ]
+
+    reply_markup = ReplyKeyboardMarkup(
+        keyboard,
+        resize_keyboard=True,
+        input_field_placeholder="Выберите действие..."
+    )
+
+    await update.message.reply_text(
+        welcome_text,
+        reply_markup=reply_markup,
+        parse_mode='HTML'
+    )
