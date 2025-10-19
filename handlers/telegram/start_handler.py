@@ -1,13 +1,15 @@
 from sqlalchemy.future import select
-from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardButton
+from telegram import Update
 from telegram.ext import ContextTypes
 
 from conf import Logger
 from database.postgresql_database import get_async_db_session
+from handlers.telegram.keyboards.main_menu_keyboard import get_menu_keyboard
 from models.database.models_database import User
 
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.delete()
     user = update.effective_user
 
     Logger.info(f"User {user.id} started the bot")
@@ -47,22 +49,8 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 👇 Выбери кнопку ниже и перестань терять фильмы!
     """
 
-    #    📁➕🎬🔍📊ℹ️
-
-    keyboard = [
-        [InlineKeyboardButton("🎬 Фильмы и сериалы", callback_data="movie_keyboard")],
-        [InlineKeyboardButton("📁 Плейлисты", callback_data="playlist_keyboard")],
-        [InlineKeyboardButton("🎯 Рекомендации", callback_data="recommendation_keyboard")],
-    ]
-
-    reply_markup = ReplyKeyboardMarkup(
-        keyboard,
-        resize_keyboard=True,
-        input_field_placeholder="Выберите действие..."
-    )
-
     await update.message.reply_text(
         welcome_text,
-        reply_markup=reply_markup,
+        reply_markup=get_menu_keyboard(),
         parse_mode='HTML'
     )

@@ -1,8 +1,12 @@
-from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import Update
 from telegram.ext import ContextTypes
+
+from handlers.telegram.keyboards.main_menu_keyboard import get_menu_keyboard
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.delete()
+
     help_text = """
 📖 Доступные разделы:
 
@@ -23,20 +27,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 • Получить рекомендацию по просмотру фильма из вашего списка
     """
 
-    keyboard = InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton("🎬 Фильмы и сериалы", callback_data="section_movies")
-        ],
-        [
-            InlineKeyboardButton("📁 Плейлисты", callback_data="section_playlists")
-        ],
-        [
-            InlineKeyboardButton("🎯 Рекомендации", callback_data="section_recommendations"),
-        ]
-    ])
-
     await update.message.reply_text(
         help_text,
-        reply_markup=keyboard,
+        reply_markup=get_menu_keyboard(),
         parse_mode='HTML'
     )
