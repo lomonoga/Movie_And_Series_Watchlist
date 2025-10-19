@@ -50,7 +50,6 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     #    📁➕🎬🔍📊ℹ️
 
     keyboard = [
-        [KeyboardButton("🎬 Фильмы и сериалы")],
         [InlineKeyboardButton("🎬 Фильмы и сериалы", callback_data="movie_keyboard")],
         [InlineKeyboardButton("📁 Плейлисты", callback_data="playlist_keyboard")],
         [InlineKeyboardButton("🎯 Рекомендации", callback_data="recommendation_keyboard")],
