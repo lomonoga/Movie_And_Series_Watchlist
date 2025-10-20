@@ -4,7 +4,7 @@ from telegram.ext import ContextTypes
 
 from conf import Logger
 from database.postgresql_database import get_async_db_session
-from handlers.telegram.keyboards.main_menu_keyboard import get_menu_keyboard
+from handlers.telegram.keyboards.menu_keyboard import get_menu_keyboard
 from models.database.models_database import User
 
 

@@ -1,12 +1,10 @@
 from telegram import Update
 from telegram.ext import ContextTypes
 
-from handlers.telegram.keyboards.main_menu_keyboard import get_menu_keyboard
+from handlers.telegram.keyboards.menu_keyboard import get_menu_keyboard
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.delete()
-
     help_text = """
 📖 Доступные разделы:
 
@@ -27,8 +25,17 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 • Получить рекомендацию по просмотру фильма из вашего списка
     """
 
-    await update.message.reply_text(
-        help_text,
-        reply_markup=get_menu_keyboard(),
-        parse_mode='HTML'
-    )
+    if update.message is not None:
+        await update.message.delete()
+        await update.message.reply_text(
+            help_text,
+            reply_markup=get_menu_keyboard(),
+            parse_mode='HTML'
+        )
+    elif update.callback_query is not None:
+        await update.callback_query.answer()
+        await update.callback_query.edit_message_text(
+            help_text,
+            reply_markup=get_menu_keyboard(),
+            parse_mode='HTML'
+        )
