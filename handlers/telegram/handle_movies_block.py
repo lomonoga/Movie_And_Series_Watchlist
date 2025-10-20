@@ -1,6 +1,8 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 
+from database.postgresql_database import get_async_db_session
+
 
 async def handle_movies_block(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -13,7 +15,7 @@ async def handle_movies_block(update: Update, context: ContextTypes.DEFAULT_TYPE
             [InlineKeyboardButton("⭐ Оценить фильм", callback_data="movies_rate_movie")],
             [InlineKeyboardButton("✅ Отметить просмотренным", callback_data="movies_mark_watched")],
             [InlineKeyboardButton("🗑️ Удалить фильм", callback_data="movies_delete_movie")],
-            [InlineKeyboardButton("🔙 Назад", callback_data="back_to_help")]
+            [InlineKeyboardButton("🔙 Назад", callback_data="back_to_info")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
 

@@ -8,7 +8,7 @@ from handlers.telegram.keyboards.menu_keyboard import get_menu_keyboard
 from models.database.models_database import User
 
 
-async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.delete()
     user = update.effective_user
 
