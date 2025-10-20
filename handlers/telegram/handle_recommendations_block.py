@@ -8,7 +8,7 @@ async def handle_recommendations_block(update: Update, context: ContextTypes.DEF
 
     if query.data == "recommendations_section":
         keyboard = [
-            [InlineKeyboardButton("🎲 Получить рекомендацию", callback_data="get_recommendation")],
+            [InlineKeyboardButton("🎲 Получить рекомендацию", callback_data="recommendations_get_recommendation")],
             [InlineKeyboardButton("🔙 Назад", callback_data="back_to_help")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)

@@ -8,10 +8,10 @@ async def handle_playlists_block(update: Update, context: ContextTypes.DEFAULT_T
 
     if query.data == "playlists_section":
         keyboard = [
-            [InlineKeyboardButton("➕ Создать плейлист", callback_data="create_playlist")],
-            [InlineKeyboardButton("📂 Мои плейлисты", callback_data="view_playlists")],
-            [InlineKeyboardButton("🎬 Добавить в плейлист", callback_data="add_to_playlist")],
-            [InlineKeyboardButton("👀 Просмотреть плейлист", callback_data="view_playlist")],
+            [InlineKeyboardButton("➕ Создать плейлист", callback_data="playlists_create_playlist")],
+            [InlineKeyboardButton("📂 Мои плейлисты", callback_data="playlists_view_playlists")],
+            [InlineKeyboardButton("🎬 Добавить в плейлист", callback_data="playlists_add_to_playlist")],
+            [InlineKeyboardButton("👀 Просмотреть плейлист", callback_data="playlists_view_playlist")],
             [InlineKeyboardButton("🔙 Назад", callback_data="back_to_help")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -21,3 +21,4 @@ async def handle_playlists_block(update: Update, context: ContextTypes.DEFAULT_T
             parse_mode="Markdown",
             reply_markup=reply_markup
         )
+
