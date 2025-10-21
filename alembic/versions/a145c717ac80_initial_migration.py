@@ -1,8 +1,8 @@
 """Initial migration
 
-Revision ID: 52a0ba72e198
+Revision ID: a145c717ac80
 Revises: 
-Create Date: 2025-10-13 22:01:35.929777
+Create Date: 2025-10-21 03:58:56.042211
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '52a0ba72e198'
+revision: str = 'a145c717ac80'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -47,9 +47,9 @@ def upgrade() -> None:
     op.create_table('movies',
     sa.Column('internal_id', sa.UUID(), nullable=False),
     sa.Column('manual_title', sa.String(length=255), nullable=False),
-    sa.Column('manual_rating', sa.Float(), nullable=False),
-    sa.Column('omdb_genres', sa.ARRAY(sa.Enum('ACTION', 'ADVENTURE', 'ANIMATION', 'Biography', 'COMEDY', 'CRIME', 'DOCUMENTARY', 'DRAMA', 'FAMILY', 'FANTASY', 'HISTORY', 'HORROR', 'MUSIC', 'MUSICAL', 'MYSTERY', 'ROMANCE', 'SPORT', 'THRILLER', 'WAR', 'WESTERN', 'NEWS', 'SHORT', 'SCIFI', 'GAMESHOW', 'REALITYTV', 'TALKSHOW', name='genreoffilmenum')), nullable=False),
-    sa.Column('imdb_rating', sa.Float(), nullable=False),
+    sa.Column('manual_rating', sa.Float(), nullable=True),
+    sa.Column('omdb_genres', sa.ARRAY(sa.Enum('ACTION', 'ADVENTURE', 'ANIMATION', 'Biography', 'COMEDY', 'CRIME', 'DOCUMENTARY', 'DRAMA', 'FAMILY', 'FANTASY', 'HISTORY', 'HORROR', 'MUSIC', 'MUSICAL', 'MYSTERY', 'ROMANCE', 'SPORT', 'THRILLER', 'WAR', 'WESTERN', 'NEWS', 'SHORT', 'SCIFI', 'GAMESHOW', 'REALITYTV', 'TALKSHOW', name='genreoffilmenum')), nullable=True),
+    sa.Column('imdb_rating', sa.Float(), nullable=True),
     sa.Column('user_id', sa.BigInteger(), nullable=False),
     sa.Column('playlist_id', sa.UUID(), nullable=True),
     sa.Column('is_viewed', sa.Boolean(), nullable=False),
