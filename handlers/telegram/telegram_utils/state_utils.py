@@ -28,6 +28,7 @@ def is_user_waiting_input(context) -> bool:
 
 def _get_state_keys():
     return [
-        "waiting_create_playlist_name",
+        "waiting_playlist_create_name",
+        "waiting_movie_add_name",
         "playlists_add_movie_playlist_id"
     ]

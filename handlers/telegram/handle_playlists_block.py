@@ -27,7 +27,7 @@ async def handle_playlists_block(update: Update, context: ContextTypes.DEFAULT_T
 
     elif query.data == "playlists_create_playlist":
         set_user_state(context, {
-            "waiting_create_playlist_name": True,
+            "waiting_playlist_create_name": True,
             "original_message_id": query.message.message_id,
             "original_chat_id": query.message.chat_id
         })
@@ -56,7 +56,7 @@ async def handle_playlists_block(update: Update, context: ContextTypes.DEFAULT_T
             )
             playlists = result.scalars().all()
 
-            keyboard = []
+            keyboard = [[InlineKeyboardButton("🔙 Назад", callback_data="playlists_section")]]
             for playlist in playlists:
                 keyboard.append([
                     InlineKeyboardButton(
@@ -64,10 +64,6 @@ async def handle_playlists_block(update: Update, context: ContextTypes.DEFAULT_T
                         callback_data=f"playlists_show_{playlist.id}"
                     )
                 ])
-
-            keyboard.extend([
-                [InlineKeyboardButton("🔙 Назад", callback_data="playlists_section")]
-            ])
 
             reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -115,9 +111,11 @@ async def handle_playlists_block(update: Update, context: ContextTypes.DEFAULT_T
                         rating_text = f"⭐ {movie.imdb_rating}/10"
                     else:
                         rating_text = "⚪ ---"
-
+                    movie_title = movie.manual_title[:25] + "..." if len(
+                        movie.manual_title) > 30 else movie.manual_title
                     watched_status = "✅" if movie.is_viewed else "⏳"
-                    movies_text += f"{i}. *{movie.manual_title}* {rating_text} | {watched_status}\n"
+
+                    movies_text += f"{i}. *{movie_title}* {rating_text} | {watched_status}\n"
             else:
                 movies_text = "В плейлисте пока нет фильмов"
 
@@ -171,7 +169,8 @@ async def handle_playlists_block(update: Update, context: ContextTypes.DEFAULT_T
             )
             movies = all_movies_result.scalars().all()
 
-        keyboard = []
+        keyboard = [[InlineKeyboardButton("🔙 Назад", callback_data="playlists_section")]]
+
         for movie in movies:
             movie_title = movie.manual_title[:25] + "..." if len(movie.manual_title) > 30 else movie.manual_title
             keyboard.append([
@@ -180,10 +179,6 @@ async def handle_playlists_block(update: Update, context: ContextTypes.DEFAULT_T
                     callback_data=f"playlists_add_movie_{movie.internal_id}"
                 )
             ])
-
-        keyboard.append(
-            [InlineKeyboardButton("🔙 Назад", callback_data="playlists_section")]
-        )
 
         reply_markup = InlineKeyboardMarkup(keyboard)
 
