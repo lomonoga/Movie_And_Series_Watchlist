@@ -1,3 +1,5 @@
+import uuid
+
 from sqlalchemy.future import select
 from sqlalchemy import and_
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
@@ -7,7 +9,7 @@ from conf import Logger
 from database.postgresql_database import get_async_db_session
 from handlers.telegram.keyboards.playlist_keyboard import get_playlist_keyboard
 from handlers.telegram.telegram_utils.state_utils import *
-from models.database.models_database import Playlist
+from models.database.models_database import Playlist, Movie
 
 
 async def handle_playlists_block(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -59,7 +61,7 @@ async def handle_playlists_block(update: Update, context: ContextTypes.DEFAULT_T
                 keyboard.append([
                     InlineKeyboardButton(
                         f"🎬 {playlist.name}",
-                        callback_data=f"playlist_show_{playlist.id}"
+                        callback_data=f"playlists_show_{playlist.id}"
                     )
                 ])
 
@@ -75,6 +77,65 @@ async def handle_playlists_block(update: Update, context: ContextTypes.DEFAULT_T
                 reply_markup=reply_markup
             )
 
-    # elif query.data == "playlists_add_to_playlist":
-    #
-    # elif query.data == "playlists_view_playlist":
+    elif query.data.startswith("playlists_show_"):
+        playlist_id = uuid.UUID(query.data.replace("playlists_show_", ""))
+
+        async with get_async_db_session() as session:
+            result = await session.execute(
+                select(Playlist).where(
+                    and_(
+                        Playlist.id == playlist_id,
+                        Playlist.user_id == update.effective_user.id,
+                        Playlist.is_deleted == False
+                    )
+                )
+            )
+            playlist = result.scalar_one_or_none()
+
+            if not playlist:
+                await query.edit_message_text("❌ Плейлист не найден.")
+                return
+
+            movies_result = await session.execute(
+                select(Movie).where(
+                    and_(
+                        Movie.playlist_id == playlist_id,
+                        Movie.is_deleted == False
+                    )
+                ).order_by(Movie.created_at.desc())
+            )
+            movies = movies_result.scalars().all()
+
+            if movies:
+                movies_text = "*Фильмы в плейлисте:*\n\n"
+                for i, movie in enumerate(movies, 1):
+                    if movie.manual_rating is not None:
+                        rating_text = f"🌟 {movie.manual_rating}/10"
+                    elif movie.imdb_rating is not None:
+                        rating_text = f"⭐ {movie.imdb_rating}/10"
+                    else:
+                        rating_text = "⚪ ---"
+
+                    watched_status = "✅" if movie.is_viewed else "⏳"
+                    movies_text += f"{i}. *{movie.manual_title}* {rating_text} | {watched_status}\n"
+            else:
+                movies_text = "В плейлисте пока нет фильмов"
+
+            keyboard = [
+                [InlineKeyboardButton("🎬 Добавить фильм", callback_data=f"playlist_add_movie_{playlist.id}")],
+                [InlineKeyboardButton("📂 Все плейлисты", callback_data="playlists_view_playlists")],
+                [InlineKeyboardButton("🔙 Назад", callback_data="playlists_section")]
+            ]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+
+            await query.edit_message_text(
+                f"🎬 *{playlist.name}*\n\n"
+                f"📊 Фильмов: {len(movies)}\n"
+                f"📅 Создан: {playlist.created_at.strftime('%d.%m.%Y')}\n\n"
+                f"{movies_text}",
+                parse_mode="Markdown",
+                reply_markup=reply_markup
+            )
+
+    # elif query.data == "playlists_add_movie_to_playlist":
+
