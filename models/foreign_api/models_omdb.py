@@ -1,5 +1,5 @@
 from pydantic import BaseModel, field_validator
-from typing import List
+from typing import List, Optional
 
 from models.logic.GenreOfFilmEnum import GenreOfFilmEnum
 
@@ -31,7 +31,7 @@ class InfoAboutFilmResponse(BaseModel):
     Poster: str
     Ratings: List[RatingMap]
     Metascore: str
-    imdbRating: float
+    imdbRating: Optional[float]
     imdbVotes: str
     imdbID: str
     Type: str
@@ -46,6 +46,16 @@ class InfoAboutFilmResponse(BaseModel):
     def parse_genres(cls, value):
         if isinstance(value, str):
             return GenreOfFilmEnum.safe_parse_list(value)
+        return value
+
+    @field_validator('imdbRating', mode='before')
+    @classmethod
+    def parse_imdb_rating(cls, value):
+        if isinstance(value, str):
+            try:
+                return float(value)
+            except (ValueError, TypeError):
+                return None
         return value
 
 

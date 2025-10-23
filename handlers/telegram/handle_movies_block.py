@@ -32,10 +32,10 @@ async def handle_movies_block(update: Update, context: ContextTypes.DEFAULT_TYPE
                     )
                 ).order_by(Movie.created_at.desc())
             )
-        movies = movies_result.scalars().all()
+            movies = movies_result.scalars().all()
 
         if movies:
-            movies_text = "*Фильмы:*\n\n"
+            movies_text = ""
             for i, movie in enumerate(movies, 1):
                 if movie.manual_rating is not None:
                     rating_text = f"🌟 {movie.manual_rating}/10"
@@ -55,8 +55,24 @@ async def handle_movies_block(update: Update, context: ContextTypes.DEFAULT_TYPE
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
 
+        total_movies = len(movies)
+        watched_movies = sum(1 for movie in movies if movie.is_viewed)
+        unwatched_movies = total_movies - watched_movies
+
+        rated_movies = [m for m in movies if m.manual_rating is not None or m.imdb_rating is not None]
+        average_rating = sum(
+            m.manual_rating if m.manual_rating is not None else m.imdb_rating
+            for m in rated_movies
+        ) / len(rated_movies) if rated_movies else 0
+
         await query.edit_message_text(
-            f"📊 Всего фильмов: {len(movies)}\n"
+            f"🎬 *Мои фильмы*\n\n"
+            f"📊 *Статистика:*\n"
+            f"• Всего фильмов: *{total_movies}*\n"
+            f"• Просмотрено: *{watched_movies}*\n"
+            f"• Не просмотрено: *{unwatched_movies}*\n"
+            f"• Средний рейтинг: *{average_rating:.1f}*\n\n"
+            f"📋 *Список фильмов:*\n"
             f"{movies_text}",
             parse_mode="Markdown",
             reply_markup=reply_markup
